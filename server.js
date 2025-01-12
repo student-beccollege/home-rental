@@ -459,6 +459,9 @@ app.use(session({
 app.use(express.static(path.join(__dirname)));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 // Owner schema
 const ownerSchema = new mongoose.Schema({
   fname: { type: String, required: true },
