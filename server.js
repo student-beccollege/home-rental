@@ -457,8 +457,8 @@ app.use(session({
 
 // Serve static files
 app.use(express.static(path.join(__dirname)));
-app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 // Owner schema
 const ownerSchema = new mongoose.Schema({
   fname: { type: String, required: true },
@@ -602,7 +602,67 @@ app.post('/register', upload.single('house-image'), async (req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
+app.get('/owner-register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'O-register.html'));
+  });
+  const emailVerificationData = {};
+  app.post('/send-code', async (req, res) => {
+    const { email } = req.body;
+    console.log('Email received:', email);
 
+  
+    if (!email || !email.includes('@')) {
+      return res.status(400).send('Invalid email format');
+    }
+  
+    const verificationCode = Math.floor(100000 + Math.random() * 900000);
+    emailVerificationData[email] = verificationCode;
+  
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com', // Use domain, not IP
+    port: 465,
+    secure: true,
+      auth: {
+        user: 'avinashkesanur@gmail.com',
+        pass: 'boqv sxtv kbud zvhc',
+      },
+    });
+  
+    const mailOptions = {
+      from: '"Quick Rent Team"<avinashkesanur@gmail.com>',
+      to: email,
+      subject: 'Your Quick Rent Verification Code',
+    text: `Hi there,
+
+Thank you for registering with Quick Rent!
+
+Your verification code is: ${verificationCode}
+
+Please use this code to complete your registration. If you did not request this email, please ignore it.
+
+Best regards,
+The Quick Rent Team`,
+  };
+  
+    try {
+      await transporter.sendMail(mailOptions);
+      res.status(200).send('Verification code sent');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Failed to send email');
+    }
+  });
+  
+  app.post('/verify-code', (req, res) => {
+    const { email, code } = req.body;
+  
+    if (emailVerificationData[email] && emailVerificationData[email] == code) {
+      delete emailVerificationData[email];
+      res.send('Verification successful');
+    } else {
+      res.status(400).send('Invalid verification code');
+    }
+  });
 // Handle login form submission
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -646,6 +706,10 @@ app.get('/home', (req, res) => {
     res.redirect('/'); 
   }
 });
+app.get('/owner-registration',(req,res)=>{
+    res.sendFile(path.join(__dirname, 'views', 'ownerregister.html'));
+  
+  })
 
 // Logout
 app.get('/logout', (req, res) => {
