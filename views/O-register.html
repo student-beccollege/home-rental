@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Registration</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body Styling */
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #c2e9fb, #e0eafc);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+    }
+
+    /* Main Container */
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      padding: 20px 30px;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    /* Title */
+    h2 {
+      color: #6a11cb;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    /* Form Input & Labels */
+    label {
+      display: block;
+      font-size: 14px;
+      margin: 10px 0 5px;
+      text-align: left;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+      transition: 0.2s ease-in-out;
+    }
+
+    input:focus {
+      border-color: #6a11cb;
+    }
+
+    /* Button Styles */
+    button {
+      margin: 15px 0;
+      background: linear-gradient(90deg, #6a11cb, #2575fc);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #2575fc, #6a11cb);
+    }
+
+    /* Message */
+    .message {
+      margin: 10px 0;
+      font-size: 14px;
+      color: red;
+    }
+
+    /* Media Query for Responsiveness */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+    }
+  </style>
+  <script>
+    // Send verification code
+    async function sendCode() {
+      const email = document.getElementById('email').value;
+
+      if (!email) {
+        alert('Please enter your email');
+        return;
+      }
+
+      try {
+        const response = await fetch('/send-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+
+        const result = await response.text();
+        alert(result);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Something went wrong!');
+      }
+    }
+
+    // Verify entered code
+    async function verifyCode() {
+      const email = document.getElementById('email').value;
+      const code = document.getElementById('code').value;
+
+      if (!email || !code) {
+        alert('Please enter both email and code');
+        return;
+      }
+
+      try {
+        const response = await fetch('/verify-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, code }),
+        });
+
+        if (response.ok) {
+          // Redirect to the registration page if verification is successful
+          window.location.href = '/owner-registration';
+        } else {
+          const result = await response.text();
+          alert(result); // Show error message
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Something went wrong!');
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Owner Registration</h2>
+    <div>
+      <label for="email">Enter Your Email:</label>
+      <input id="email" type="email" placeholder="example@email.com" />
+
+      <button onclick="sendCode()">Send Verification Code</button>
+
+      <label for="code">Enter Verification Code:</label>
+      <input id="code" type="text" placeholder="Code from email" />
+
+      <button onclick="verifyCode()">Verify Code</button>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Dashboard with Search, Filter, and Map</title>
+ 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #e0eafc, #cfdef3);
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      font-size: 2.5em;
+      color: #fff;
+      background: #4a90e2;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Search bar styles */
+    #search-bar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 15px 0;
+      align-items: center;
+    }
+
+    #search-bar input[type="text"],
+    #search-bar input[type="number"],
+    #search-bar select {
+      padding: 8px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      outline: none;
+      width: 200px;
+    }
+
+    /* Owner Cards */
+    #owner-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .owner-card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      width: 300px;
+      background: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .owner-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .owner-card img {
+      max-width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .owner-card button {
+      padding: 8px 15px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s ease;
+    }
+
+    /* Modal and map container styles */
+    #map-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #map-container {
+      width: 600px;
+      height: 400px;
+      background: #fff;
+      border-radius: 10px;
+    }
+
+    #map-modal button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 8px 15px;
+      background: red;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+       z-index: 1001; /* Ensure button visibility */
+    }
+
+ 
+.card-header {
+    width: 100%;
+    height: 250px; /* Increase the height of the card header to make the image larger */
+    overflow: hidden;
+    background: url('${owner.houseImage}') no-repeat center center;
+    background-size: cover; /* Ensures the image fills the container */
+    filter: blur(0); /* Ensure no blur effect */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-position: center; /* Ensures the image is centered */
+}
+
+/* For the image (if you're using img tag directly) */
+.house-image {
+    width: 100%; /* Make the image width 100% of the container */
+    height: 100%; /* Make the image height 100% of the container */
+    object-fit: cover; /* Ensures the image fills the area without distortion */
+    object-position: center; /* Ensures the image is centered */
+}
+
+
+
+  
+  
+  
+  .owner-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Card Header */
+  .card-header {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .house-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+  
+  /* Card Body */
+  .card-body {
+    padding: 20px;
+  }
+  
+  .owner-name {
+    margin: 0;
+    font-size: 22px;
+    color: #007bff;
+    text-transform: capitalize;
+    text-align: center;
+  }
+  
+  .card-body p {
+    margin: 8px 0;
+    font-size: 14px;
+  }
+  
+  .restrictions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .restrictions ul li {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+  
+  /* Map Button */
+  .map-button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    display: block;
+    margin: 15px auto 0;
+    font-size: 14px;
+    width: fit-content;
+  }
+  
+  .map-button:hover {
+    background: #0056b3;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 400px) {
+    .owner-card {
+      width: 100%;
+      margin: 10px;
+    }
+  
+    .house-image {
+      height: 150px;
+    }
+  }
+  
+  </style>
+</head>
+
+<body>
+  <h1>🏠 Dashboard with Search & Map Integration</h1>
+
+
+  <div id="search-bar">
+    <input id="search-input" type="text" placeholder="Search by address..." oninput="filterOwners()" />
+    <input id="price-min" type="number" placeholder="Min ₹" oninput="filterOwners()" />
+    <input id="price-max" type="number" placeholder="Max ₹" oninput="filterOwners()" />
+    <select id="bhk-filter" onchange="filterOwners()">
+      <option value="">All BHK Options</option>
+      <option value="1">1 BHK</option>
+      <option value="2">2 BHK</option>
+      <option value="3">3 BHK</option>
+      <option value="4">4 BHK</option>
+    </select>
+  </div>
+
+
+  <div id="owner-container"></div>
+
+
+  <div id="map-modal">
+    <button onclick="closeMap()">Close</button>
+    <div id="map-container"></div>
+  </div>
+
+  <script>
+    let ownersData = [];
+    let mapInstance;
+
+    async function fetchOwnersAndRender() {
+      try {
+        const response = await fetch('/api/owners');
+        ownersData = await response.json();
+        renderOwners(ownersData);
+      } catch (error) {
+        console.error("Error fetching owner data:", error);
+      }
+    }
+
+    function renderOwners(owners) {
+      const container = document.getElementById('owner-container');
+      container.innerHTML = '';
+
+      for (const owner of owners) {
+        const div = document.createElement("div");
+div.classList.add("owner-card");
+div.innerHTML = `
+  <div class="card-header">
+    <img src="${owner.houseImage}" alt="Owner's House" class="house-image">
+  </div>
+  <div class="card-body">
+    <h4 class="owner-name">${owner.fname} ${owner.lname}</h4>
+    <p><strong>Address:</strong> ${owner.address}</p>
+    <p><strong>Price:</strong> ₹${owner.price.toLocaleString('en-IN')}</p>
+    <p><strong>BHK:</strong> ${owner.bhk}</p>
+    <p><strong>Phone:</strong> ${owner.phone}</p>
+    <div class="restrictions">
+      <p><strong>Restrictions:</strong></p>
+      <ul>
+        <li>Students Allowed: ${owner.restrictions.studentsAllowed ? "Yes" : "No"}</li>
+        <li>Families Allowed: ${owner.restrictions.familiesAllowed ? "Yes" : "No"}</li>
+      </ul>
+    </div>
+    <p><strong>Available:</strong> ${owner.available ? "Yes" : "No"}</p>
+    <button class="map-button" onclick="showMap(${owner.latitude}, ${owner.longitude}, '${owner.fname} ${owner.lname}', '${owner.address}')">View on Map</button>
+  </div>
+`;
+container.appendChild(div);
+
+        
+      }
+    }
+
+    function showMap(lat, lng, name, address) {
+      const modal = document.getElementById('map-modal');
+      modal.style.display = 'flex';
+
+      if (mapInstance) mapInstance.remove();
+
+      mapInstance = L.map('map-container').setView([lat, lng], 15);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapInstance);
+
+      const marker = L.marker([lat, lng]).addTo(mapInstance);
+      marker.bindPopup(`<b>Name:</b> ${name}<br><b>Address:</b> ${address}`).openPopup();
+    }
+
+    function closeMap() {
+      const modal = document.getElementById('map-modal');
+      modal.style.display = 'none';
+      if (mapInstance) mapInstance.remove();
+      mapInstance = null;
+    }
+
+    function filterOwners() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const minPrice = parseInt(document.getElementById('price-min').value) || 0;
+      const maxPrice = parseInt(document.getElementById('price-max').value) || Infinity;
+      const bhkFilter = document.getElementById('bhk-filter').value;
+
+      const filteredOwners = ownersData.filter(owner =>
+        owner.address.toLowerCase().includes(query) &&
+        owner.price >= minPrice &&
+        owner.price <= maxPrice &&
+        (bhkFilter === '' || owner.bhk.toString() === bhkFilter)
+      );
+
+      renderOwners(filteredOwners);
+    }
+
+    fetchOwnersAndRender();
+    function showMap(lat, lng, name, address) {
+      const modal = document.getElementById('map-modal');
+      modal.style.display = 'flex';
+    
+      if (mapInstance) mapInstance.remove();
+    
+      mapInstance = L.map('map-container').setView([lat, lng], 15);
+    
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapInstance);
+    
+      const marker = L.marker([lat, lng]).addTo(mapInstance);
+    
+      // Create a Google Maps link
+      const gmapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+    
+      marker.bindPopup(`
+        <b>Name:</b> ${name}<br>
+        <b>Address:</b> ${address}<br>
+        <a href="${gmapLink}" target="_self">Open in Google Maps</a>
+      `).openPopup();
+    }
+    
+  </script>
+</body>
+
+</html>   
+
+

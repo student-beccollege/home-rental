@@ -1,0 +1,529 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom right, #3a1c71, #d76d77, #ffaf7b);
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            max-width: 900px;
+            width: 90%;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(to top right, #141e30, #243b55);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #ffffff;
+            text-align: center;
+            padding: 40px;
+            animation: slideInLeft 1s ease-out 0.3s forwards;
+            transform: translateX(-50%);
+            opacity: 0;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .left-panel h1, .left-panel p {
+            opacity: 0;
+            animation: fadeInText 1s ease-out forwards;
+        }
+
+        .left-panel h1 {
+            animation-delay: 0.5s;
+        }
+
+        .left-panel p {
+            animation-delay: 0.7s;
+        }
+
+        @keyframes fadeInText {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .right-panel {
+            flex: 1;
+            padding: 40px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(to bottom, #ffffff, #f0f4f9);
+            animation: slideInRight 1s ease-out 0.3s forwards;
+            transform: translateX(50%);
+            opacity: 0;
+        }
+
+        @keyframes slideInRight {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .right-panel h2 {
+            font-size: 30px;
+            color: #3a1c71;
+            margin-bottom: 30px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInText 1s ease-out forwards;
+            animation-delay: 1s;
+        }
+
+        .form-control {
+            margin-bottom: 25px;
+            opacity: 0;
+            animation: fadeInFormElements 1s ease-out forwards;
+            animation-delay: 1.3s;
+        }
+
+        @keyframes fadeInFormElements {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .form-control label {
+            display: block;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 10px;
+        }
+
+        .form-control input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+        }
+
+        .form-control input:focus {
+            outline: none;
+            border-color: #3a1c71;
+            box-shadow: 0 0 5px rgba(58, 28, 113, 0.5);
+            transform: scale(1.05);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            background: #d76d77;
+            color: #ffffff;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            animation: buttonScale 1s ease-out 0.5s forwards;
+        }
+
+        .login-button:hover {
+            background: #c15b63;
+            transform: scale(1.05);
+        }
+
+        @keyframes buttonScale {
+            from {
+                transform: scale(0.95);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .login-button:active {
+            transform: translateY(2px);
+        }
+
+        .right-panel p {
+            margin-top: 20px;
+            text-align: center;
+            color: #555555;
+            font-size: 14px;
+        }
+
+        .right-panel p a {
+            color: #3a1c71;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .right-panel p a:hover {
+            text-decoration: underline;
+        }
+        #register-options {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 20;
+            text-align: center;
+        }
+        #register-options button {
+            background-color: #ff6600;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #register-options button:hover {
+            background-color: #ffcc00;
+        }
+
+        #register-options #close-btn {
+            background-color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h1>Welcome Back!</h1>
+            <p>We’re thrilled to have you again! Join us for a better experience.</p>
+        </div>
+        <div class="right-panel">
+            <h2>Login</h2>
+            <form action="/login" method="POST">
+                <div class="form-control">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button class="login-button" type="submit">Sign In</button>
+            </form>
+            <p>Don't have an account? <a href="/signup" id="register-btn">Sign up now</a></p>
+        </div>
+    </div>
+    <div id="register-options">
+        <h2>Register As:</h2>
+        <button onclick="window.location.href='/owner-register'">Sign Up as Owner</button>
+        <button onclick="window.location.href='/signup-renter'">Sign Up as Renter</button>
+        <button id="close-btn">Close</button>
+    </div>
+
+    <script>
+        const registerBtn=document.getElementById('register-btn');
+        registerBtn.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
+            registerOptions.style.display = 'block';
+        });
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to Your Account</title>
+    <meta name="description" content="Securely log in to your account to access personalized services.">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom right, #3a1c71, #d76d77, #ffaf7b);
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            max-width: 900px;
+            width: 90%;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(to top right, #141e30, #243b55);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #ffffff;
+            text-align: center;
+            padding: 40px;
+            animation: slideInLeft 1s ease-out 0.3s forwards;
+            transform: translateX(-50%);
+            opacity: 0;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .right-panel {
+            flex: 1;
+            padding: 40px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(to bottom, #ffffff, #f0f4f9);
+            animation: slideInRight 1s ease-out 0.3s forwards;
+            transform: translateX(50%);
+            opacity: 0;
+        }
+
+        @keyframes slideInRight {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .right-panel h2 {
+            font-size: 30px;
+            color: #3a1c71;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-control {
+            margin-bottom: 25px;
+        }
+
+        .form-control label {
+            display: block;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 10px;
+        }
+
+        .form-control input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+        }
+
+        .form-control input:focus {
+            outline: none;
+            border-color: #3a1c71;
+            box-shadow: 0 0 5px rgba(58, 28, 113, 0.5);
+            transform: scale(1.05);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            background: #d76d77;
+            color: #ffffff;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .login-button:hover {
+            background: #c15b63;
+            transform: scale(1.05);
+        }
+
+        .login-button:active {
+            transform: translateY(2px);
+        }
+
+        .right-panel p {
+            margin-top: 20px;
+            text-align: center;
+            color: #555555;
+            font-size: 14px;
+        }
+
+        .right-panel p a {
+            color: #3a1c71;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .right-panel p a:hover {
+            text-decoration: underline;
+        }
+
+        #register-options {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 20;
+            text-align: center;
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        #register-options h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        #register-options button {
+            background: #ff6600;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            margin: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+        
+        #register-options button:hover {
+            background-color: #ffcc00;
+            transform: scale(1.05);
+        }
+        
+        #register-options #close-btn {
+            background-color: #ff4d4d;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        #register-options button:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h1>Welcome Back!</h1>
+            <p>We’re thrilled to have you again! Join us for a better experience.</p>
+        </div>
+        <div class="right-panel">
+            <h2>Login</h2>
+            <form action="/login" method="POST">
+                <div class="form-control">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-control">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button class="login-button" type="submit">Sign In</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="register-btn">Sign up now</a></p>
+        </div>
+    </div>
+    <div id="register-options">
+        <h2>Register As:</h2>
+        <button onclick="window.location.href='/owner-register'">Sign Up as Owner</button>
+        <button onclick="window.location.href='/signup-renter'">Sign Up as Renter</button>
+        <button id="close-btn">Close</button>
+    </div>
+
+    <script>
+        const registerBtn = document.getElementById('register-btn');
+        const registerOptions = document.getElementById('register-options');
+        const closeBtn = document.getElementById('close-btn');
+
+        registerBtn.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
+            registerOptions.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            registerOptions.style.display = 'none';
+        });
+
+
+
+         // Get the current URL
+         const urlParams = new URLSearchParams(window.location.search);
+
+         // Check if 'error' parameter exists in the URL
+         if (urlParams.has('error')) {
+            alert('Email or password is incorrect. Please try again')
+         }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Renter Registration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <h2>Renter Registration Form</h2>
+  <form id="renterForm" action="/register-renter" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="fname" required minlength="3" maxlength="50" />
+    <div class="error" id="nameError"></div>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required />
+    <div class="error" id="emailError"></div>
+
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="off" required>
+        <div class="error-message" id="passwordError"></div>
+     </div>
+
+
+    <label for="phone">Phone Number:</label>
+    <input type="tel" id="phone" name="phone" required pattern="^[0-9]{10}$" />
+    <div class="error" id="phoneError"></div>
+    <input type="hidden" name="type" value="renter" />
+
+
+
+    <button type="submit">Register</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("renterForm");
+
+    form.addEventListener("submit", function (event) {
+      let isValid = true;
+
+      // Name validation
+      const name = document.getElementById("name");
+      const nameError = document.getElementById("nameError");
+      if (name.value.trim().length < 3 || name.value.trim().length > 50) {
+        nameError.textContent = "Name must be between 3 and 50 characters.";
+        isValid = false;
+      } else {
+        nameError.textContent = "";
+      }
+
+      // Email validation
+      const email = document.getElementById("email");
+      const emailError = document.getElementById("emailError");
+      const password = document.getElementById('password').value.trim();
+      if (!email.validity.valid) {
+        emailError.textContent = "Please enter a valid email address.";
+        isValid = false;
+      } else {
+        emailError.textContent = "";
+      }
+
+      if (password.length < 6) {
+        isValid = false;
+        document.getElementById('passwordError').textContent = 'Password must be at least 6 characters.';
+     }
+
+      // Phone validation
+      const phone = document.getElementById("phone");
+      const phoneError = document.getElementById("phoneError");
+      if (!phone.validity.valid) {
+        phoneError.textContent = "Phone number must be 10 digits.";
+        isValid = false;
+      } else {
+        phoneError.textContent = "";
+      }
+
+
+      // Prevent form submission if any field is invalid
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>

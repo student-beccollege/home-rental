@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Availability</title>
+</head>
+<body>
+  <h1>Edit Availability</h1>
+  <form action="/update-availability" method="POST">
+    <label for="available">Available:</label>
+    <select id="available" name="available" required>
+      <option value="true">Yes</option>
+      <option value="false">No</option>
+    </select>
+    <br><br>
+    <button type="submit">Update Availability</button>
+  </form>
+</body>
+</html>
