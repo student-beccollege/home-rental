@@ -427,8 +427,8 @@ const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.set('view engine', 'ejs');
 app.use(express.static('public'));
+
 
 // MongoDB connection
 
@@ -457,7 +457,8 @@ app.use(session({
 
 // Serve static files
 app.use(express.static(path.join(__dirname)));
-
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 // Owner schema
 const ownerSchema = new mongoose.Schema({
   fname: { type: String, required: true },
