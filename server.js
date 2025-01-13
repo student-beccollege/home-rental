@@ -433,7 +433,7 @@ app.use(express.static('public'));
 // MongoDB connection
 
 // Your MongoDB connection string
-const uri = 'mongodb+srv://avinashkesanur:Avinash%40%23123@cluster0.4pndb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const uri = 'mongodb+srv://avinashkesanur:Avinash%40%23123@cluster0.4pndb.mongodb.net/houseRegistrationDB?retryWrites=true&w=majority&appName=Cluster0';
 
 // Connect to MongoDB Atlas
 mongoose.connect(uri, {
@@ -460,7 +460,8 @@ app.use(express.static(path.join(__dirname)));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+
 
 // Owner schema
 const ownerSchema = new mongoose.Schema({
