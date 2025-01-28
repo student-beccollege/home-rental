@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const multer = require('multer');
 
@@ -19,15 +20,21 @@ app.use(express.static('public'));
 // MongoDB connection
 
 // Your MongoDB connection string
- const uri = 'mongodb+srv://avinashkesanur:Avinash%40%23123@cluster0.4pndb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-const client = new MongoClient(uri);
-const dbName = 'houseRegistrationDB';
-mongoose.connect('mongodb://localhost:27017/houseRegistrationDB', {
+
+const uri = 'mongodb+srv://avinashkesanur:Avinash%40%23123@cluster0.4pndb.mongodb.net/houseRegistrationDB?retryWrites=true&w=majority&appName=Cluster0';
+
+// Connect to MongoDB Atlas
+mongoose.connect(uri, { 
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('Connected to MongoDB'))
-.catch((err) => console.error('MongoDB connection error:', err));
+.then(() => {
+  console.log('Connected to MongoDB Atlas');
+})
+.catch((err) => {
+  console.error('MongoDB Atlas connection error:', err);
+});
+
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
@@ -82,31 +89,41 @@ const Renter = mongoose.model('Renter', renterSchema);
 app.post('/register-renter', async (req, res) => {
   const { fname, email, phone, password, type } = req.body;
 
+  console.log('Request received:', { fname, email, phone, password, type });
+
   try {
     if (!fname || !email || !phone || !password) {
+      console.log('Missing required fields');
       return res.status(400).send('All fields are required');
     }
 
     const existingRenter = await Renter.findOne({ email });
     if (existingRenter) {
+      console.log('Email already registered');
       return res.status(400).send('Email already registered');
     }
+
+    console.log('Hashing password...');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Password hashed successfully');
 
     const newRenter = new Renter({
       fname,
       email,
       phone,
-      password,
+      password: hashedPassword,
       type,
     });
 
+    console.log('Saving new renter...');
     await newRenter.save();
+    console.log('New renter saved successfully');
 
     res.send(`
       <html>
         <body style="margin: 0; font-family: Arial, sans-serif; background-color: green; color: white; height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center;">
           <div>
-            <h2>Registration Successfull</h2>
+            <h2>Registration Successful</h2>
             <p>You will be redirected to the home page shortly...</p>
           </div>
           <script>
@@ -117,12 +134,13 @@ app.post('/register-renter', async (req, res) => {
         </body>
       </html>
     `);
-    
+
   } catch (err) {
     console.error('Error registering renter:', err);
     res.status(500).send('Internal server error');
   }
 });
+
 
 // Image storage configuration
 const storage = multer.diskStorage({
