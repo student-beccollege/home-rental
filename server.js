@@ -103,9 +103,6 @@ app.post('/register-renter', async (req, res) => {
       return res.status(400).send('Email already registered');
     }
 
-    console.log('Hashing password...');
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log('Password hashed successfully');
 
     const newRenter = new Renter({
       fname,
