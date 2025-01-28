@@ -19,7 +19,7 @@ app.use(express.static('public'));
 // MongoDB connection
 
 // Your MongoDB connection string
-const uri = 'mongodb+srv://avinashkesanur:Avinash%40%23123@cluster0.4pndb.mongodb.net/houseRegistrationDB?retryWrites=true&w=majority';
+ const uri = 'mongodb+srv://avinashkesanur:Avinash%40%23123@cluster0.4pndb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 const client = new MongoClient(uri);
 const dbName = 'houseRegistrationDB';
 mongoose.connect('mongodb://localhost:27017/houseRegistrationDB', {
