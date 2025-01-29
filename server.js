@@ -8,7 +8,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const multer = require('multer');
 
@@ -103,6 +102,8 @@ app.post('/register-renter', async (req, res) => {
       return res.status(400).send('Email already registered');
     }
 
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newRenter = new Renter({
       fname,
