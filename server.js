@@ -10,7 +10,7 @@ const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const multer = require('multer');
-
+const bcrypt=require('bcrypt')
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.static('public'));
@@ -102,14 +102,15 @@ app.post('/register-renter', async (req, res) => {
       return res.status(400).send('Email already registered');
     }
 
+    // ✅ Hash the password inside the try block
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-   
+
     const newRenter = new Renter({
       fname,
       email,
       phone,
-      password: hashedPassword,
+      password: hashedPassword, // ✅ Using hashed password
       type,
     });
 
@@ -134,10 +135,11 @@ app.post('/register-renter', async (req, res) => {
     `);
 
   } catch (err) {
-    console.error('Error registering renter:', err);
-    res.status(500).send('Internal server error');
+    console.error('Error registering renter:', err.message);
+    res.status(500).send('Internal server error: ' + err.message);
   }
 });
+
 
 
 // Image storage configuration
