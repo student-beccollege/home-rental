@@ -102,6 +102,8 @@ app.post('/register-renter', async (req, res) => {
       return res.status(400).send('Email already registered');
     }
 
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
    
     const newRenter = new Renter({
       fname,
