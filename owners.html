@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -235,6 +236,104 @@
       height: 150px;
     }
   }
+  .book-button{
+    position:relative;
+    top:25px;
+  }
+  #booking-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+  }
+  
+  .booking-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .booking-container button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .booking-container button:hover {
+    background: #0056b3;
+  }
+
+  #booking-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Modal Content */
+  #booking-modal form {
+    background-color: #fff; /* White background */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+  }
+
+  #booking-modal h2 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  #booking-modal p {
+    margin: 10px 0;
+  }
+
+  #booking-modal input,
+  #booking-modal textarea,
+  #booking-modal button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  #booking-modal button {
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s;
+  }
+
+  #booking-modal button:hover {
+    background-color: #0056b3;
+  }
+
+  #booking-modal button[type="button"] {
+    background-color: #dc3545;
+  }
+
+  #booking-modal button[type="button"]:hover {
+    background-color: #c82333;
+  }
   
   </style>
 </head>
@@ -264,6 +363,28 @@
     <button onclick="closeMap()">Close</button>
     <div id="map-container"></div>
   </div>
+ 
+  <!-- Booking Modal -->
+ <!-- Booking Modal -->
+ <div id="booking-modal" style="display: none;">
+  <h2>Book Your Stay</h2>
+  <form onsubmit="senddata(); return false;">
+    <input type="hidden" id="owner-id">
+    <p>Owner Name: <input type="text" id="owner-name" readonly></p>
+    <p>Address: <input type="text" id="owner-address" readonly></p>
+    <p>Price: <input type="text" id="owner-price" readonly></p>
+    <p>Email: <input type="text" id="owner-email" readonly></p>
+    <p>Date: <input type="date" id="booking-date" required></p>
+    <p>Notes: <textarea id="booking-notes"></textarea></p>
+    <button type="submit">Confirm Booking</button>
+    <button type="button" onclick="closeBookingForm()">Cancel</button>
+  </form>
+</div>
+
+
+  
+  
+</div>
 
   <script>
     let ownersData = [];
@@ -288,7 +409,7 @@
 div.classList.add("owner-card");
 div.innerHTML = `
   <div class="card-header">
-    <img src="${owner.houseImage}" alt="Owner's House" class="house-image">
+     <img src="${owner.houseImage}" alt="Owner's House" class="house-image">
   </div>
   <div class="card-body">
     <h4 class="owner-name">${owner.fname} ${owner.lname}</h4>
@@ -305,6 +426,7 @@ div.innerHTML = `
     </div>
     <p><strong>Available:</strong> ${owner.available ? "Yes" : "No"}</p>
     <button class="map-button" onclick="showMap(${owner.latitude}, ${owner.longitude}, '${owner.fname} ${owner.lname}', '${owner.address}')">View on Map</button>
+  <button class="book-button" onclick="openBookingForm('${owner._id}', '${owner.fname} ${owner.lname}', '${owner.address}', ${owner.price}, '${owner.email}')">Interested</button>
   </div>
 `;
 container.appendChild(div);
@@ -312,7 +434,8 @@ container.appendChild(div);
         
       }
     }
-
+    
+   
     function showMap(lat, lng, name, address) {
       const modal = document.getElementById('map-modal');
       modal.style.display = 'flex';
@@ -372,10 +495,64 @@ container.appendChild(div);
         <a href="${gmapLink}" target="_self">Open in Google Maps</a>
       `).openPopup();
     }
+
+
+    function closeBookingForm() {
+      document.getElementById('booking-modal').style.display = 'none';
+    }
     
+    function openBookingForm(ownerId, ownerName, ownerAddress, ownerPrice, ownerEmail) {
+      document.getElementById('owner-id').value = ownerId;
+      document.getElementById('owner-name').value = ownerName;
+      document.getElementById('owner-address').value = ownerAddress;
+      document.getElementById('owner-price').value = ownerPrice;
+      document.getElementById('owner-email').value = ownerEmail;
+    
+      document.getElementById('booking-modal').style.display = 'block';
+    }
+    
+    function closeBookingForm() {
+      document.getElementById('booking-modal').style.display = 'none';
+    }
+    
+    function senddata() {
+      const bookingData = {
+        ownerId: document.getElementById("owner-id").value,
+        ownerName: document.getElementById("owner-name").value,
+        ownerAddress: document.getElementById("owner-address").value,
+        ownerPrice: document.getElementById("owner-price").value,
+        ownerEmail: document.getElementById("owner-email").value,
+        bookingDate: document.getElementById("booking-date").value,
+        bookingNotes: document.getElementById("booking-notes").value,
+      };
+    
+      fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            alert("Details are sent owner successfully!");
+            closeBookingForm();
+          } else {
+            alert("Booking failed: " + data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("An error occurred while booking.");
+        });
+    }
+    
+ 
   </script>
 </body>
 
 </html>   
+
 
 

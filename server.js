@@ -1,6 +1,4 @@
 
-
-
 const express = require('express');
 const path = require('path');
 const nodemailer = require('nodemailer');
@@ -14,12 +12,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.static('public'));
 
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+const dotenv = require('dotenv')
+
+dotenv.config(); 
+
 
 // MongoDB connection
 
 // Your MongoDB connection string
 
-const uri = 'mongodb+srv://avinashkesanur:Avinash%40%23123@cluster0.4pndb.mongodb.net/houseRegistrationDB?retryWrites=true&w=majority&appName=Cluster0';
+const uri = 'mongodb+srv://avinashkesanur:Avinash%40%23123%25%25%25@cluster0.4pndb.mongodb.net/rentalDB?retryWrites=true&w=majority';
 
 // Connect to MongoDB Atlas
 mongoose.connect(uri, { 
@@ -45,8 +50,7 @@ app.use(session({
 app.use(express.static(path.join(__dirname)));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/images', express.static(path.join(__dirname, 'public/images')));
+
 
 
 // Owner schema
@@ -57,7 +61,7 @@ const ownerSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   address: { type: String, required: true },
-  houseImage: { type: String, required: true },
+houseImage: { type: String, required: true }, 
   price: { type: Number, required: true },
   latitude: { type: Number, required: true },
   longitude: { type: Number, required: true },
@@ -138,49 +142,71 @@ app.post('/register-renter', async (req, res) => {
 
 
 
-// Image storage configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+// Multer + Cloudinary Storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'house-images',
+    allowed_formats: ['jpg', 'jpeg', 'png']
+  }
+});
 const upload = multer({ storage });
 
-// Owner registration handling
-app.post('/register', upload.single('house-image'), async (req, res) => {
+
+// Route to handle registration with image
+app.post('/register', upload.single('image'), async (req, res) => {
   try {
-    const { fname, lname, phone, email, address, latitude, longitude, price, password, bhk } = req.body;
+    const {
+      fname,
+      lname,
+      phone,
+      email,
+      password,
+      address,
+      price,
+      bhk,
+      latitude,
+      longitude,
+      studentsAllowed,
+      familiesAllowed,
+      available
+    } = req.body;
 
-    const restrictions = {
-      studentsAllowed: req.body.studentsAllowed === 'true',
-      familiesAllowed: req.body.familiesAllowed === 'true',
-    };
-
+    // ✅ Create a new Owner document
     const newOwner = new Owner({
       fname,
       lname,
       phone,
       email,
+      password,
       address,
-      houseImage: req.file ? req.file.path : null,
+      houseImage: req.file.path, // Cloudinary file URL
+      price,
       latitude,
       longitude,
-      price,
-      password,
       bhk,
-      restrictions,
+      restrictions: {
+        studentsAllowed: studentsAllowed === 'true',
+        familiesAllowed: familiesAllowed === 'true'
+      },
+      available: available === 'true'
     });
 
     await newOwner.save();
+
+    // ✅ Send success message
     res.send(`
       <html>
         <body style="margin: 0; font-family: Arial, sans-serif; background-color: green; color: white; height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center;">
           <div>
-            <h2>Registration Successfull</h2>
+            <h2>Registration Successful</h2>
             <p>You will be redirected to the home page shortly...</p>
           </div>
           <script>
@@ -191,9 +217,10 @@ app.post('/register', upload.single('house-image'), async (req, res) => {
         </body>
       </html>
     `);
+
   } catch (err) {
     console.error('Error saving data:', err);
-    res.status(500).send('Error saving data');
+    res.status(500).send('Error saving data: ' + err.message);
   }
 });
 
@@ -223,7 +250,7 @@ app.get('/owner-register', (req, res) => {
     secure: true,
       auth: {
         user: 'avinashkesanur@gmail.com',
-        pass: 'boqv sxtv kbud zvhc',
+        pass: 'exnu qcfe ondp vgkz',
       },
     });
   
@@ -266,22 +293,27 @@ The Quick Rent Team`,
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  req.session.email = email;
   try {
     const owner = await Owner.findOne({ email });
     if (owner && owner.password === password) {
-        req.session.role = 'owner';
-        req.session.firstName = owner.fname;
-        req.session.lastName = owner.lname;
-        return res.redirect('/home');
+      req.session.role = 'owner';
+      req.session.firstName = owner.fname || '';
+      req.session.lastName = owner.lname || '';
+      req.session.phone = owner.phone || '';
+      req.session.email = owner.email || '';  // ✅ from DB
+      req.session.ownerId = owner._id;
+      return res.redirect('/home');
     }
 
     const renter = await Renter.findOne({ email });
     if (renter && renter.password === password) {
-        req.session.role = 'renter';
-        req.session.firstName = renter.fname;
-        req.session.lastName = renter.lname;
-        return res.redirect('/home');
+      req.session.role = 'renter';
+      req.session.firstName = renter.fname || '';
+      req.session.lastName = renter.lname || '';
+      req.session.phone = renter.phone || '';
+      req.session.email = renter.email || ''; // ✅ from DB
+      req.session.renterId = renter._id;
+      return res.redirect('/home');
     }
 
     res.redirect('/?error=true');
@@ -290,6 +322,7 @@ app.post('/login', async (req, res) => {
     return res.redirect('/');
   }
 });
+
 app.get('/signup-renter', (req, res) => {
     res.sendFile(path.join(__dirname, 'renter.html'));
   });
@@ -387,6 +420,75 @@ app.get('/owners', (req, res) => {
       res.status(500).send('Internal Server Error');
     }
   });
+
+  const transporter = nodemailer.createTransport({
+  service: "gmail", // Use your email service (e.g., Gmail, Outlook, etc.)
+  auth: {
+    user: "avinashkesanur@gmail.com", // Replace with your email address
+    pass: "exnu qcfe ondp vgkz", // Replace with your app password
+  },
+});
+
+app.post("/api/bookings", async (req, res) => {
+  const {
+    ownerId,
+    ownerName,
+    ownerAddress,
+    ownerPrice,
+    ownerEmail,
+    bookingDate,
+    bookingNotes,
+  } = req.body;
+
+  const renterDetails = {
+    fname: req.session.firstName,
+    lname: req.session.lastName,
+    phone: req.session.phone,
+    email: req.session.email,
+};
+
+
+  // Validate the input
+  if (!ownerId || !ownerName || !ownerAddress || !ownerPrice || !ownerEmail || !bookingDate) {
+    return res.status(400).json({ success: false, message: "All fields are required!" });
+  }
+
+  try {
+    // Create the email content
+    const mailOptions = {
+      from: '"Quick Rent Team"<avinashkesanur@gmail.com>',
+      to: ownerEmail, // Owner's email address
+      subject: "New Booking Received",
+      text: `Hello ${ownerName},
+
+A new booking request has been made.
+
+Renter Details:
+Name: ${renterDetails.fname} 
+Phone: ${renterDetails.phone}
+Email: ${renterDetails.email}
+Booking Date: ${bookingDate}
+Booking Notes: ${bookingNotes}
+Please contact the renter for further discussion.
+
+Thank you,
+Quick Rent Team`,
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error("Error sending email:", err);
+        return res.status(500).json({ success: false, message: "Failed to send email." });
+      }
+      console.log("Email sent: " + info.response);
+      res.status(200).json({ success: true, message: "Email successfully sent to the owner!" });
+    });
+  } catch (error) {
+    console.error("Error processing booking:", error);
+    res.status(500).json({ success: false, message: "Server error occurred." });
+  }
+});
   
 // Start the server
 app.listen(PORT, () => {
