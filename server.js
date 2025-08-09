@@ -26,17 +26,7 @@ dotenv.config();
 
 const uri = 'mongodb+srv://avinashkesanur:Avinash%40%23123%25%25%25@cluster0.4pndb.mongodb.net/rentalDB?retryWrites=true&w=majority';
 
-// Connect to MongoDB Atlas
-mongoose.connect(uri, { 
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('Connected to MongoDB Atlas');
-})
-.catch((err) => {
-  console.error('MongoDB Atlas connection error:', err);
-});
+
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -491,6 +481,14 @@ Quick Rent Team`,
 });
   
 // Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to MongoDB Atlas');
+    // Start the server **only after** successful connection
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('MongoDB Atlas connection error:', err);
+  });
