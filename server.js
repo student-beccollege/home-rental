@@ -11,6 +11,7 @@ const multer = require('multer');
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.static('public'));
+const MongoStore = require('connect-mongo');
 
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
@@ -33,7 +34,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
     secret: 'secret-key',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: uri }),
 }));
 
 // Serve static files

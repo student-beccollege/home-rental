@@ -1,42 +1,4 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .edit-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: green;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <h1>Welcome to the Home Page!</h1>
-    <p>Enjoy browsing the available houses.</p>
-    <button class="edit-btn" id="editButton">Edit</button>
 
-    <script>
-        // Get the role from the query parameters
-        const params = new URLSearchParams(window.location.search);
-        const role = params.get('role');
-
-        // Hide the edit button if the role is renter
-        if (role === 'renter') {
-            document.getElementById('editButton').style.display = 'none';
-        }
-    </script>
-</body>
-</html>
-
- -->
  <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,7 +32,7 @@
                 position: fixed;
                 top: 0;
                 width: 100%;
-                background-color: rgba(0, 0, 0, 0.7);
+               background-color: transparent;
                 padding: 15px 0;
                 text-align: center;
                 z-index: 10;
@@ -287,7 +249,7 @@
 
     #text-gradient {
         font-size: 2rem;
-        top: 70px;
+        top: 80px;
         padding: 0.8rem;
     }
 
@@ -326,6 +288,10 @@
         padding: 10px 0;
     }
 
+    #text-gradient {
+        font-size: 1.5rem;
+        top: 65px;
+    }
 
     .logout-btn {
         font-size: 13px;
@@ -348,25 +314,8 @@
         font-size: 14px;
         padding: 10px;
     }
- #text-gradient {
-    font-size: 2.5rem;
-    font-weight: bold;
-    text-align: center;
-    background: linear-gradient(to right, #FFD700, #FFCC00);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradient-animation 3s infinite;
-    padding: 1rem;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-top: 100px; /* space for nav */
-    position: relative; /* no fixed positioning */
-}
 
-
-
-
-
+   
     footer {
         font-size: 0.8em;
     }
@@ -394,8 +343,6 @@
     <div class="content">
         <h1 id="text-gradient"> Welcome<%= firstName %>!</h1>
        
-
-        <p>Your cozy stay begins here.</p>
         <button class="button" onclick="showOwners()">Explore</button>
     </div>
 
