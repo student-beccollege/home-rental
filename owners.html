@@ -334,6 +334,21 @@
   #booking-modal button[type="button"]:hover {
     background-color: #c82333;
   }
+ /* Mobile Design */
+@media (max-width: 480px) {
+  .filter-bar {
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .filter-btn {
+    width: 100%;
+  }
+ 
+
+  
+}
   
   </style>
 </head>
@@ -341,9 +356,8 @@
 <body>
   <h1>🏠 Dashboard with Search & Map Integration</h1>
 
-
   <div id="search-bar">
-    <input id="search-input" type="text" placeholder="Search by address..." oninput="filterOwners()" />
+    <input id="search-input" type="text" placeholder="            Search by address" oninput="filterOwners()" />
     <input id="price-min" type="number" placeholder="Min ₹" oninput="filterOwners()" />
     <input id="price-max" type="number" placeholder="Max ₹" oninput="filterOwners()" />
     <select id="bhk-filter" onchange="filterOwners()">

@@ -140,6 +140,12 @@
                 transform: scale(1.1);
                 box-shadow: 0 8px 12px rgba(0, 0, 0, 0.6);
             }
+            body {
+    background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80');
+    background-size: cover;
+    background-position: center;
+}
+
     
             /* Registration Modal */
             #register-options {
@@ -247,6 +253,125 @@
             border: none;
             cursor: pointer;
         }
+        /* Mobile Responsive Design */
+@media (max-width: 1024px) {
+    nav ul li {
+        margin: 0 10px;
+    }
+
+    .content h1, #welcome {
+        font-size: 26px;
+    }
+
+    .content p {
+        font-size: 1.2em;
+    }
+
+    .button {
+        font-size: 1em;
+        padding: 12px 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    nav ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        display: block;
+        margin: 8px 0;
+    }
+
+    #text-gradient {
+        font-size: 2rem;
+        top: 70px;
+        padding: 0.8rem;
+    }
+
+    .logout-btn {
+        top: 15px;
+        right: 15px;
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    .content {
+        padding: 40px 15px;
+    }
+
+    .content h1 {
+        font-size: 24px;
+    }
+
+    .content p {
+        font-size: 1.1em;
+    }
+
+    .button {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .edit-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    nav {
+        padding: 10px 0;
+    }
+
+
+    .logout-btn {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+
+    .content {
+        padding: 30px 10px;
+    }
+
+    .content h1 {
+        font-size: 20px;
+    }
+
+    .content p {
+        font-size: 1em;
+    }
+
+    .button, .edit-btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+ #text-gradient {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    background: linear-gradient(to right, #FFD700, #FFCC00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-animation 3s infinite;
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 100px; /* space for nav */
+    position: relative; /* no fixed positioning */
+}
+
+
+
+
+
+    footer {
+        font-size: 0.8em;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -267,7 +392,7 @@
  
 
     <div class="content">
-        <h1 id="text-gradient">🌟 Welcome to Our Home, <%= firstName %>!🌟</h1>
+        <h1 id="text-gradient"> Welcome<%= firstName %>!</h1>
        
 
         <p>Your cozy stay begins here.</p>
