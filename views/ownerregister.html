@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
    <meta charset="UTF-8">
@@ -291,6 +291,379 @@
          if (bhk === '') {
             isValid = false;
             document.getElementById('bhkError').textContent = 'Please select the number of BHK.';
+         }
+
+         if (!isValid) {
+            e.preventDefault();
+         }
+      });
+   </script>
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <title>House Owner Registration</title>
+   <style>
+      /* General Styles */
+      body {
+         font-family: Arial, sans-serif;
+         background-color: #f4f4f4;
+         margin: 0;
+         padding: 0;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         min-height: 100vh;
+         overflow: auto;
+      }
+
+      .registration-container {
+         background: #fff;
+         padding: 20px;
+         border-radius: 10px;
+         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+         max-width: 400px;
+         width: 100%;
+         margin: 20px;
+      }
+
+      h2 {
+         text-align: center;
+         margin-bottom: 20px;
+         color: #333;
+      }
+
+      .form-group {
+         margin-bottom: 15px;
+      }
+
+      label {
+         display: block;
+         font-weight: bold;
+         margin-bottom: 5px;
+         color: #555;
+      }
+
+      input[type="text"],
+      input[type="tel"],
+      input[type="email"],
+      input[type="file"],
+      input[type="password"],
+      select,
+      textarea {
+         width: 100%;
+         padding: 8px;
+         border: 1px solid #ddd;
+         border-radius: 5px;
+         box-sizing: border-box;
+      }
+
+      .submit-btn {
+         display: inline-block;
+         width: 100%;
+         padding: 10px 15px;
+         background: #007bff;
+         color: #fff;
+         font-size: 16px;
+         font-weight: bold;
+         border: none;
+         border-radius: 10px;
+         cursor: pointer;
+         margin-top: 10px;
+         text-align: center;
+         border-color: black;
+      }
+
+      .submit-btn:disabled {
+         background-color: #d3d3d3;
+         cursor: not-allowed;
+      }
+
+      .error-message {
+         color: red;
+         font-size: 12px;
+         margin-top: 5px;
+      }
+
+      #fetchUserLoc {
+         display: inline-block;
+         margin-left: 3px;
+         font-size: 16px;
+         cursor: pointer;
+         color: #ffffff;
+      }
+
+      .submit-btn:hover:not(:disabled) {
+         background-color: #69a8ec;
+         color: #ffffff;
+      }
+   </style>
+</head>
+
+<body>
+   <div class="registration-container">
+      <h2>House Owner Registration</h2>
+      <form id="registrationForm" action="/register" method="post" enctype="multipart/form-data" autocomplete="off">
+         <div class="form-group">
+            <label for="fname">First Name</label>
+            <input type="text" id="fname" name="fname" placeholder="Enter your first name" autocomplete="off" required />
+            <div class="error-message" id="fnameError"></div>
+         </div>
+
+         <div class="form-group">
+            <label for="lname">Last Name</label>
+            <input type="text" id="lname" name="lname" placeholder="Enter your last name" autocomplete="off" required />
+            <div class="error-message" id="lnameError"></div>
+         </div>
+
+         <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="10-digit phone number" autocomplete="off" required />
+            <div class="error-message" id="phoneError"></div>
+         </div>
+
+         <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="your.email@example.com" autocomplete="off" required />
+            <div class="error-message" id="emailError"></div>
+         </div>
+
+         <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autocomplete="off" required />
+            <div class="error-message" id="passwordError"></div>
+         </div>
+
+         <div class="form-group">
+            <label for="address">House Address</label>
+            <textarea
+               id="address"
+               name="address"
+               placeholder="Full address of the property"
+               autocomplete="off"
+               required
+               rows="5"
+            ></textarea>
+            <div class="error-message" id="addressError"></div>
+         </div>
+
+         <div class="form-group">
+            <label for="house-image">House Image</label>
+            <input type="file" id="house-image" name="image" accept="image/*" autocomplete="off" required />
+            <div class="error-message" id="imageError"></div>
+         </div>
+
+         <div class="form-group">
+            <label for="price">Price (in INR)</label>
+            <input type="text" id="price" name="price" placeholder="Enter the price" autocomplete="off" required />
+            <div class="error-message" id="priceError"></div>
+         </div>
+
+         <div class="form-group">
+            <label for="bhk">Number of BHK</label>
+            <select id="bhk" name="bhk" autocomplete="off" required>
+               <option value="">Select BHK</option>
+               <option value="1">1 BHK</option>
+               <option value="2">2 BHK</option>
+               <option value="3">3 BHK</option>
+               <option value="4">4 BHK</option>
+               <option value="5">5 BHK</option>
+            </select>
+            <div class="error-message" id="bhkError"></div>
+         </div>
+
+         <button type="button" id="fetchUserLoc" class="submit-btn" onclick="fetchUserLocation()">
+           Fetch My Location
+         </button>
+         <br /><br />
+
+         <div class="form-group">
+            <label for="latitude">Latitude</label>
+            <input type="text" id="latitude" name="latitude" autocomplete="off" required readonly />
+            <div class="error-message" id="latError"></div>
+         </div>
+
+         <div class="form-group">
+            <label for="longitude">Longitude</label>
+            <input type="text" id="longitude" name="longitude" autocomplete="off" required readonly />
+            <div class="error-message" id="longError"></div>
+         </div>
+
+         <input type="hidden" name="role" value="owner" />
+
+         <label>
+            <input type="checkbox" name="studentsAllowed" value="true" /> Allow Students
+         </label>
+         <label>
+            <input type="checkbox" name="familiesAllowed" value="true" /> Allow Families
+         </label>
+
+         <label for="available">Available</label>
+         <select id="available" name="available" required>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+         </select>
+
+         <button type="submit" class="submit-btn" id="submitBtn" disabled>
+           Register
+         </button>
+      </form>
+   </div>
+
+   <script>
+      const submitBtn = document.getElementById("submitBtn");
+      const latitudeInput = document.getElementById("latitude");
+      const longitudeInput = document.getElementById("longitude");
+
+      function enableSubmitIfLocationSet() {
+         if (
+            latitudeInput.value.trim() !== "" &&
+            longitudeInput.value.trim() !== "" &&
+            !isNaN(parseFloat(latitudeInput.value)) &&
+            !isNaN(parseFloat(longitudeInput.value))
+         ) {
+            submitBtn.disabled = false;
+         } else {
+            submitBtn.disabled = true;
+         }
+      }
+
+      function fetchUserLocation() {
+         if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser.");
+            return;
+         }
+
+         if (navigator.permissions) {
+            navigator.permissions.query({ name: "geolocation" }).then((result) => {
+               if (result.state === "denied") {
+                  alert(
+                     "Location permission is denied.\n\nPlease enable location permission for this site in your browser settings, then reload the page and try again."
+                  );
+                  return;
+               }
+               getLocation();
+            });
+         } else {
+            getLocation();
+         }
+
+         function getLocation() {
+            navigator.geolocation.getCurrentPosition(
+               (position) => {
+                  console.log(
+                     `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`
+                  );
+                  latitudeInput.value = position.coords.latitude;
+                  longitudeInput.value = position.coords.longitude;
+                  document.getElementById("latError").textContent = "";
+                  alert(
+                     `Location fetched: Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`
+                  );
+                  enableSubmitIfLocationSet();
+               },
+               (error) => {
+                  let message = "";
+                  switch (error.code) {
+                     case error.PERMISSION_DENIED:
+                        message = "Permission denied. Please allow location access and reload the page.";
+                        break;
+                     case error.POSITION_UNAVAILABLE:
+                        message = "Location information is unavailable. Please try again.";
+                        break;
+                     case error.TIMEOUT:
+                        message = "Request timed out. Please try again.";
+                        break;
+                     default:
+                        message = "An unknown error occurred: " + error.message;
+                        break;
+                  }
+                  document.getElementById("latError").textContent = message;
+                  alert(message);
+                  console.error("Geolocation error:", error);
+               },
+               {
+                  enableHighAccuracy: true,
+                  timeout: 10000,
+                  maximumAge: 0,
+               }
+            );
+         }
+      }
+
+      // Form validation
+      const form = document.getElementById("registrationForm");
+      form.addEventListener("submit", function (e) {
+         let isValid = true;
+         document.querySelectorAll(".error-message").forEach((el) => (el.textContent = ""));
+
+         const latitude = parseFloat(latitudeInput.value);
+         const longitude = parseFloat(longitudeInput.value);
+
+         if (isNaN(latitude) || isNaN(longitude)) {
+            isValid = false;
+            document.getElementById("latError").textContent = "Please fetch and confirm your location.";
+         }
+
+         const fname = document.getElementById("fname").value.trim();
+         const lname = document.getElementById("lname").value.trim();
+         const phone = document.getElementById("phone").value.trim();
+         const email = document.getElementById("email").value.trim();
+         const password = document.getElementById("password").value.trim();
+         const address = document.getElementById("address").value.trim();
+         const image = document.getElementById("house-image").value.trim();
+         const price = document.getElementById("price").value.trim();
+         const bhk = document.getElementById("bhk").value.trim();
+
+         if (fname === "") {
+            isValid = false;
+            document.getElementById("fnameError").textContent = "First Name is required.";
+         }
+
+         if (lname === "") {
+            isValid = false;
+            document.getElementById("lnameError").textContent = "Last Name is required.";
+         }
+
+         if (!/^\d{10}$/.test(phone)) {
+            isValid = false;
+            document.getElementById("phoneError").textContent = "Phone Number must be 10 digits.";
+         }
+
+         if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+            isValid = false;
+            document.getElementById("emailError").textContent = "Enter a valid email address.";
+         }
+
+         if (password.length < 6) {
+            isValid = false;
+            document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
+         }
+
+         if (address === "") {
+            isValid = false;
+            document.getElementById("addressError").textContent = "Address is required.";
+         }
+
+         if (image === "") {
+            isValid = false;
+            document.getElementById("imageError").textContent = "Please upload a house image.";
+         }
+
+         if (isNaN(price) || Number(price) <= 0) {
+            isValid = false;
+            document.getElementById("priceError").textContent = "Enter a valid price.";
+         }
+
+         if (bhk === "") {
+            isValid = false;
+            document.getElementById("bhkError").textContent = "Please select the number of BHK.";
          }
 
          if (!isValid) {
